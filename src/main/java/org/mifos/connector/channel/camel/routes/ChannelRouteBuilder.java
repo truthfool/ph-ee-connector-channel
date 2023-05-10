@@ -93,14 +93,14 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
     private Boolean isNotificationFailureServiceEnabled;
     private ZeebeProcessStarter zeebeProcessStarter;
     private ZeebeClient zeebeClient;
-    private List<String> dfspIds;
+    private List<String> ahhIds;
     private ObjectMapper objectMapper;
     private ClientProperties clientProperties;
     private RestTemplate restTemplate;
     private String timer;
     private String restAuthHeader;
 
-    public ChannelRouteBuilder(@Value("#{'${dfspids}'.split(',')}") List<String> dfspIds,
+    public ChannelRouteBuilder(@Value("#{'${accountHoldingInstitutionIds}'.split(',')}") List<String> ahhIds,
                                @Value("${bpmn.flows.payment-transfer}") String paymentTransferFlow,
                                @Value("${bpmn.flows.special-payment-transfer}") String specialPaymentTransferFlow,
                                @Value("${bpmn.flows.transaction-request}") String transactionRequestFlow,
@@ -131,7 +131,7 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
         this.partyRegistration = partyRegistration;
         this.zeebeProcessStarter = zeebeProcessStarter;
         this.zeebeClient = zeebeClient;
-        this.dfspIds = dfspIds;
+        this.ahhIds = ahhIds;
         this.objectMapper = objectMapper;
         this.clientProperties = clientProperties;
         this.restTemplate = restTemplate;
@@ -201,7 +201,7 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                 .log(LoggingLevel.INFO, "## CHANNEL -> inbound transferDetail request for ${header.transactionId}")
                 .process(e -> {
                     String tenantId = e.getIn().getHeader("Platform-TenantId", String.class);
-                    if (tenantId == null || !dfspIds.contains(tenantId)) {
+                    if (tenantId == null || !ahhIds.contains(tenantId)) {
                         throw new RuntimeException("Requested tenant " + tenantId + " not configured in the connector!");
                     }
                     Client client = clientProperties.getClient(tenantId);
@@ -263,7 +263,7 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                         " ${header.X-CorrelationID}")
                 .process(e -> {
                     String tenantId = e.getIn().getHeader("Platform-TenantId", String.class);
-                    if (tenantId == null || !dfspIds.contains(tenantId)) {
+                    if (tenantId == null || !ahhIds.contains(tenantId)) {
                         throw new RuntimeException("Requested tenant " + tenantId + " not configured in the connector!");}
                     Client client = clientProperties.getClient(tenantId);
                     String requestType = getRequestType(e.getIn().getHeader("requestType", String.class));
@@ -311,7 +311,7 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
 
                     String tenantId = exchange.getIn().getHeader("Platform-TenantId", String.class);
                     String clientCorrelationId = exchange.getIn().getHeader("X-CorrelationID", String.class);
-                    if (tenantId == null || !dfspIds.contains(tenantId)) {
+                    if (tenantId == null || !ahhIds.contains(tenantId)) {
                         throw new RuntimeException("Requested tenant " + tenantId + " not configured in the connector!");
                     }
                     extraVariables.put(TENANT_ID, tenantId);
@@ -395,7 +395,7 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
 
                     String tenantId = exchange.getIn().getHeader("Platform-TenantId", String.class);
                     String clientCorrelationId = exchange.getIn().getHeader("X-CorrelationID", String.class);
-                    if (tenantId == null || !dfspIds.contains(tenantId)) {
+                    if (tenantId == null || !ahhIds.contains(tenantId)) {
                         throw new RuntimeException("Requested tenant " + tenantId + " not configured in the connector!");
                     }
                     extraVariables.put(TENANT_ID, tenantId);
@@ -493,7 +493,7 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                     extraVariables.put(AUTH_TYPE, "NONE");
 
                     String tenantId = exchange.getIn().getHeader("Platform-TenantId", String.class);
-                    if (tenantId == null || !dfspIds.contains(tenantId)) {
+                    if (tenantId == null || !ahhIds.contains(tenantId)) {
                         throw new RuntimeException("Requested tenant " + tenantId + " not configured in the connector!");
                     }
                     String clientCorrelationId = exchange.getIn().getHeader("X-CorrelationID", String.class);
@@ -540,7 +540,7 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                 .to("bean-validator:request")
                 .process(exchange -> {
                     String tenantId = exchange.getIn().getHeader("Platform-TenantId", String.class);
-                    if (tenantId == null || !dfspIds.contains(tenantId)) {
+                    if (tenantId == null || !ahhIds.contains(tenantId)) {
                         throw new RuntimeException("Requested tenant " + tenantId + " not configured in the connector!");
                     }
                     RegisterAliasRequestDTO channelRequest = exchange.getIn().getBody(RegisterAliasRequestDTO.class);
@@ -635,7 +635,7 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                         Map<String, Object> extraVariables = new HashMap<>();
 
                         String tenantId = exchange.getIn().getHeader("Platform-TenantId", String.class);
-                        if (tenantId == null || !dfspIds.contains(tenantId)) {
+                        if (tenantId == null || !ahhIds.contains(tenantId)) {
                             throw new RuntimeException("Requested tenant " + tenantId + " not configured in the connector!");
                         }
                         extraVariables.put(TENANT_ID, tenantId);
