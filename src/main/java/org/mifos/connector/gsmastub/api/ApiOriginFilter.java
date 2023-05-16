@@ -19,7 +19,13 @@ public class ApiOriginFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         String corId= req.getHeader("X-CorrelationID");
         logger.info("X-CorrelationID:{}",corId);
-        String remoteAddress = req.getRemoteAddr();
+        String remoteAddress = req.getHeader("X-Forwarded-For");
+
+        if (remoteAddress == null || remoteAddress.isEmpty()) {
+            remoteAddress = req.getRemoteAddr();
+        } else {
+            remoteAddress = remoteAddress.split(",")[0].trim();
+        }
         logger.info("Remote IP address: {}", remoteAddress);
 
         res.addHeader("Access-Control-Allow-Origin", "*");

@@ -22,6 +22,7 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.filter.ForwardedHeaderFilter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.threeten.bp.Instant;
 import org.threeten.bp.LocalDate;
@@ -68,6 +69,13 @@ public class ChannelConnectorApplication {
             //registry.addConverter(new LocalDateTimeConverter("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
         }
     }
+    @Bean
+    public FilterRegistrationBean<ForwardedHeaderFilter> forwardedHeaderFilter() {
+        FilterRegistrationBean<ForwardedHeaderFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new ForwardedHeaderFilter());
+        registrationBean.setOrder(0); // Set the order to ensure this filter is executed first
+        return registrationBean;
+    }
     @Configuration
     public class FilterConfig {
         @Bean
@@ -75,6 +83,7 @@ public class ChannelConnectorApplication {
             FilterRegistrationBean<ApiOriginFilter> registrationBean = new FilterRegistrationBean<>();
             registrationBean.setFilter(new ApiOriginFilter());
             registrationBean.addUrlPatterns("/*");
+            registrationBean.setOrder(1);
             return registrationBean;
         }
     }
