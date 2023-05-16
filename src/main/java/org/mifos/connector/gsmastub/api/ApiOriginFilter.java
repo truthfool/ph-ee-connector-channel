@@ -17,6 +17,8 @@ public class ApiOriginFilter implements Filter {
                          FilterChain chain) throws IOException, ServletException {
         HttpServletResponse res = (HttpServletResponse) response;
         HttpServletRequest req = (HttpServletRequest) request;
+        String corId= req.getHeader("X-CorrelationID");
+        logger.info("X-CorrelationID:{}",corId);
         String remoteAddress = req.getRemoteAddr();
         logger.info("Remote IP address: {}", remoteAddress);
 
