@@ -12,35 +12,14 @@ import java.io.IOException;
 public class ApiOriginFilter implements Filter {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
-    private static final String[] HEADERS_TO_TRY = {
-            "X-Forwarded-For",
-            "Proxy-Client-IP",
-            "WL-Proxy-Client-IP",
-            "HTTP_X_FORWARDED_FOR",
-            "HTTP_X_FORWARDED",
-            "HTTP_X_CLUSTER_CLIENT_IP",
-            "HTTP_CLIENT_IP",
-            "HTTP_FORWARDED_FOR",
-            "HTTP_FORWARDED",
-            "HTTP_VIA",
-            "REMOTE_ADDR" };
-    private String getClientIpAddress(HttpServletRequest request) {
-        for (String header : HEADERS_TO_TRY) {
-            String ip = request.getHeader(header);
-            if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
-                logger.info("Header and value : {},{}",header,ip);
-            }
-        }
-
-        logger.info("Remote address:{}",request.getRemoteAddr());
-        return request.getRemoteAddr();
-    }
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
                          FilterChain chain) throws IOException, ServletException {
         HttpServletResponse res = (HttpServletResponse) response;
         HttpServletRequest req = (HttpServletRequest) request;
-        getClientIpAddress(req);
+        String remoteAddress = req.getRemoteAddr();
+        logger.info("Remote IP address: {}", remoteAddress);
+
         res.addHeader("Access-Control-Allow-Origin", "*");
         res.addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
         res.addHeader("Access-Control-Allow-Headers", "Content-Type");

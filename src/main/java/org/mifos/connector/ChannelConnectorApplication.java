@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
+import org.mifos.connector.gsmastub.api.ApiOriginFilter;
 import org.mifos.connector.gsmastub.configuration.CustomInstantDeserializer;
 import org.mifos.connector.gsmastub.configuration.LocalDateConverter;
 import org.mifos.connector.gsmastub.configuration.LocalDateTimeConverter;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
@@ -64,6 +66,16 @@ public class ChannelConnectorApplication {
             registry.addConverter(new LocalDateConverter("yyyy-MM-dd"));
             registry.addConverter(new LocalDateTimeConverter("yyyy-MM-dd'T'HH:mm:ss.SSS"));
             //registry.addConverter(new LocalDateTimeConverter("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
+        }
+    }
+    @Configuration
+    public class FilterConfig {
+        @Bean
+        public FilterRegistrationBean<ApiOriginFilter> loggingFilter() {
+            FilterRegistrationBean<ApiOriginFilter> registrationBean = new FilterRegistrationBean<>();
+            registrationBean.setFilter(new ApiOriginFilter());
+            registrationBean.addUrlPatterns("/*");
+            return registrationBean;
         }
     }
 
