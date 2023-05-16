@@ -24,7 +24,8 @@ public class ApiOriginFilter implements Filter {
         if (remoteAddress == null || remoteAddress.isEmpty()) {
             remoteAddress = req.getRemoteAddr();
         } else {
-            remoteAddress = remoteAddress.split(",")[0].trim();
+            String[] ipAddresses = remoteAddress.split(",");
+            remoteAddress = ipAddresses[ipAddresses.length - 1].trim();
         }
         logger.info("Remote IP address: {}", remoteAddress);
 
