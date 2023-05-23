@@ -20,6 +20,7 @@ public class ApiOriginFilter implements Filter {
         String corId= req.getHeader("X-CorrelationID");
         logger.info("X-CorrelationID:{}",corId);
         String remoteAddress = req.getHeader("X-Forwarded-For");
+        String remoteAddress2 = req.getHeader("X-Original-Forwarded-For");
 
         if (remoteAddress == null || remoteAddress.isEmpty()) {
             remoteAddress = req.getRemoteAddr();
@@ -28,6 +29,7 @@ public class ApiOriginFilter implements Filter {
             remoteAddress = ipAddresses[ipAddresses.length - 1].trim();
         }
         logger.info("Remote IP address: {}", remoteAddress);
+        logger.info("Remote IP address 2: {}", remoteAddress2);
 
         res.addHeader("Access-Control-Allow-Origin", "*");
         res.addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
