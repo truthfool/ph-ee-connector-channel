@@ -12,6 +12,33 @@ import java.io.IOException;
 public class ApiOriginFilter implements Filter {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final String[] HEADERS_TO_TRY = {
+            "X-Forwarded-For",
+            "X-Forwarded-Host",
+            "X-Forwarded-Port",
+            "X-Forwarded-Proto",
+            "X-Forwarded-Scheme",
+            "X-Original-Forwarded-For",
+            "Proxy-Client-IP",
+            "WL-Proxy-Client-IP",
+            "HTTP_X_FORWARDED_FOR",
+            "HTTP_X_FORWARDED",
+            "HTTP_X_CLUSTER_CLIENT_IP",
+            "HTTP_CLIENT_IP",
+            "HTTP_FORWARDED_FOR",
+            "HTTP_FORWARDED",
+            "HTTP_VIA",
+            "REMOTE_ADDR"
+    };
+    private String getClientIpAddress(HttpServletRequest request) {
+        for (String header : HEADERS_TO_TRY) {
+            String val = request.getHeader(header);
+            logger.info("Header Name : {}",header);
+            logger.info("Header Value : {}",val);
+        }
+
+        return request.getRemoteAddr();
+    }
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
                          FilterChain chain) throws IOException, ServletException {
@@ -19,17 +46,7 @@ public class ApiOriginFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         String corId= req.getHeader("X-CorrelationID");
         logger.info("X-CorrelationID:{}",corId);
-        String remoteAddress = req.getHeader("X-Forwarded-For");
-        String remoteAddress2 = req.getHeader("X-Original-Forwarded-For");
-
-        if (remoteAddress == null || remoteAddress.isEmpty()) {
-            remoteAddress = req.getRemoteAddr();
-        } else {
-            String[] ipAddresses = remoteAddress.split(",");
-            remoteAddress = ipAddresses[ipAddresses.length - 1].trim();
-        }
-        logger.info("Remote IP address: {}", remoteAddress);
-        logger.info("Remote IP address 2: {}", remoteAddress2);
+        getClientIpAddress(req);
 
         res.addHeader("Access-Control-Allow-Origin", "*");
         res.addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
