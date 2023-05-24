@@ -30,14 +30,12 @@ public class ApiOriginFilter implements Filter {
             "HTTP_VIA",
             "REMOTE_ADDR"
     };
-    private String getClientIpAddress(HttpServletRequest request) {
+    private void getClientIpAddress(HttpServletRequest request) {
         for (String header : HEADERS_TO_TRY) {
             String val = request.getHeader(header);
             logger.info("Header Name : {}",header);
             logger.info("Header Value : {}",val);
         }
-
-        return request.getRemoteAddr();
     }
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
