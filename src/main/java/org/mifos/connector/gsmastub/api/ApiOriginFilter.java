@@ -7,6 +7,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Iterator;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-27T11:46:46.417Z[GMT]")
 public class ApiOriginFilter implements Filter {
@@ -38,8 +39,13 @@ public class ApiOriginFilter implements Filter {
         }
         logger.info("Request remote address: {}",request.getRemoteAddr());
         logger.info("Remote Host: {}",request.getRemoteHost());
-        logger.info("Header names: {}",request.getHeaderNames().toString());
+        logger.info("Header names: ");
+        Iterator<String>headersList= request.getHeaderNames().asIterator();
+        while(headersList.hasNext()){
+            logger.info(headersList.next());
+        }
     }
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
                          FilterChain chain) throws IOException, ServletException {
