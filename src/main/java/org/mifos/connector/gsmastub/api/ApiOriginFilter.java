@@ -36,6 +36,9 @@ public class ApiOriginFilter implements Filter {
             logger.info("Header Name : {}",header);
             logger.info("Header Value : {}",val);
         }
+        logger.info("Request remote address: {}",request.getRemoteAddr());
+        logger.info("Remote Host: {}",request.getRemoteHost());
+        logger.info("Header names: {}",request.getHeaderNames().toString());
     }
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
